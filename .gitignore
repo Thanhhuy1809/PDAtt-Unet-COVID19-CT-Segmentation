@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+
+# Model weights
+*.pt
+*.pth
+
+# Medical images
+*.nii
+*.nii.gz
+
+# Training outputs
+Models/
+Results/
+*.png
+*.jpg
+
+# Dataset
+data/
+detailed train and test/Models*
+detailed train and test/Results*
+
+# OS
+.DS_Store
