@@ -108,23 +108,24 @@ val_transforms = A.Compose(
 
 ############################
 # Part 2
-
+# train 1 / validation 1 là 5
+# train 2 / validation 2 là 4
 train_set = Data_loaderVE(
     root='./Datas'
-    , train=r'C:\Users\LUU VAN THANH HUY\PycharmProjects\PythonProject\PBL4\PDAtt-Unet-main2\PDAtt-Unet-main2\detailed train and test\Training_data2.pt'
+    , train=r'C:\Users\LUU VAN THANH HUY\PycharmProjects\PythonProject\PBL4\PDAtt-Unet-main2\PDAtt-Unet-main2\detailed train and test\Training_data2a.pt'
     , transform=train_transform
 )
 
 validate_set = Data_loaderVE(
     root='./Datas'
-    , train=r'C:\Users\LUU VAN THANH HUY\PycharmProjects\PythonProject\PBL4\PDAtt-Unet-main2\PDAtt-Unet-main2\detailed train and test\Validation_data2.pt'
+    , train=r'C:\Users\LUU VAN THANH HUY\PycharmProjects\PythonProject\PBL4\PDAtt-Unet-main2\PDAtt-Unet-main2\detailed train and test\Validation_data2a.pt'
     , transform=val_transforms
 )
 
 ############################
 F1_mean, dise_mean, IoU_mean = [], [], []
 
-dataset_idx = 4
+dataset_idx = 2
 
 modl_n = 'PYAttUNet'
 
@@ -134,7 +135,7 @@ batch_size = 6
 runs = 5
 for itr in range(runs):
     # itr += 5
-    model_sp = "./Models" + str(dataset_idx) + "/" + modl_n + "/Models"
+    model_sp = "./Model_dataset" + str(dataset_idx) + "/" + modl_n + "/Models"
     if not os.path.exists(model_sp):
         os.makedirs(model_sp)
     ############################
@@ -142,7 +143,7 @@ for itr in range(runs):
     name_model_final = model_sp + '/' + str(itr) + '_fi.pt'
     name_model_bestF1 = model_sp + '/' + str(itr) + '_bt.pt'
 
-    model_spR = "./Models" + str(dataset_idx) + "/" + modl_n + "/Results"
+    model_spR = "./Model_dataset" + str(dataset_idx) + "/" + modl_n + "/Results"
     if not os.path.exists(model_spR):
         os.makedirs(model_spR)
 
@@ -239,9 +240,10 @@ for itr in range(runs):
                     loss3 = criterion(outputs.squeeze(dim=1) * edge, edge)
                     """
                     calculate the total loss 
-                    0.7* infection_loss + 0.3* lung_loss + alpha*Edge_loss
+                    0.7* infection_loss + 0.3* lung_loss + gamma*Edge_loss
+                    gamma = 0.7 for Dataset_2 (paper Section 5.1)
                     """
-                    loss = 0.7 * loss1 + 0.3 * loss2 + 2 * loss3
+                    loss = 0.7 * loss1 + 0.3 * loss2 + 0.7 * loss3
                     optimizer.zero_grad()
                     loss.backward()
                     optimizer.step()
@@ -252,8 +254,6 @@ for itr in range(runs):
                         outputs, outputs2 = model(x)
                         loss1 = criterion(outputs.squeeze(dim=1), y)
                         loss = loss1
-
-                running_loss += loss
 
                 running_loss += loss
 
